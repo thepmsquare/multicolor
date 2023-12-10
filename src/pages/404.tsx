@@ -4,7 +4,6 @@ import { Button, Card, StyledEngineProvider, Typography } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import config from "../../config";
 import { ThemeToggle } from "squarecomponents";
-import "../stylesheets/index.css";
 import "../stylesheets/common.css";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
