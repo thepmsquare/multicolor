@@ -1,9 +1,10 @@
-import React, { StrictMode, useState } from "react";
+import React, { FormEvent, StrictMode, useState } from "react";
 import type { HeadFC, PageProps } from "gatsby";
 import {
   Button,
   Card,
   StyledEngineProvider,
+  TextField,
   ThemeProvider,
   Typography,
   createTheme,
@@ -20,6 +21,7 @@ import {
   CustomSnackbarStateType,
   ThemeToggle,
 } from "squarecomponents";
+import { MuiOtpInput } from "mui-one-time-password-input";
 
 const isBrowser = typeof window !== "undefined";
 
@@ -50,6 +52,8 @@ const IndexPage: React.FC<PageProps> = () => {
       message: "",
       severity: "error",
     });
+  const [username, changeUsername] = useState("");
+  const [roomNumber, changeRoomNumber] = useState("");
 
   // functions
   const customChangeThemeState = (newThemeState: "dark" | "light") => {
@@ -60,6 +64,21 @@ const IndexPage: React.FC<PageProps> = () => {
   };
   const navigateToSinglePlayer = () => {
     window.open(config.singlePlayerLink, "_blank");
+  };
+
+  const handleJoinRoomSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const ws = new WebSocket("ws://localhost:10011/ws");
+    ws.addEventListener("open", (_) => {
+      let messageToSend = {
+        game: "truecolor",
+        gameData: {
+          roomNumber,
+          username,
+        },
+      };
+      ws.send(JSON.stringify(messageToSend));
+    });
   };
   // misc
   let currentTheme = createTheme({
@@ -79,6 +98,26 @@ const IndexPage: React.FC<PageProps> = () => {
               <Typography variant="h1" color="primary">
                 {config.appName}
               </Typography>
+              <form>
+                <form onSubmit={handleJoinRoomSubmit}>
+                  <TextField
+                    value={username}
+                    label="username"
+                    onChange={(e) => changeUsername(e.target.value)}
+                    required
+                  />
+
+                  <MuiOtpInput
+                    value={roomNumber}
+                    onChange={(newValue) => changeRoomNumber(newValue)}
+                    length={5}
+                    TextFieldsProps={{ required: true, label: "room id" }}
+                  />
+                  <Button type="submit" variant="outlined">
+                    join
+                  </Button>
+                </form>
+              </form>
               <Button variant="outlined" onClick={navigateToSinglePlayer}>
                 single player
               </Button>

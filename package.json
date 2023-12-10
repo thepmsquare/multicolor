@@ -23,6 +23,7 @@
     "gatsby": "^5.12.4",
     "gatsby-plugin-manifest": "^5.12.3",
     "gatsby-plugin-sitemap": "^6.12.3",
+    "mui-one-time-password-input": "^2.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "squarecomponents": "^1.0.1"
