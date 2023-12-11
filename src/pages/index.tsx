@@ -1,4 +1,4 @@
-import React, { FormEvent, StrictMode, useState } from "react";
+import React, { FormEvent, StrictMode, useEffect, useState } from "react";
 import type { HeadFC, PageProps } from "gatsby";
 import {
   Button,
@@ -54,6 +54,7 @@ const IndexPage: React.FC<PageProps> = () => {
     });
   const [username, changeUsername] = useState("");
   const [roomNumber, changeRoomNumber] = useState("");
+  const [isServerOn, changeIsServerOn] = useState(false);
 
   // functions
   const customChangeThemeState = (newThemeState: "dark" | "light") => {
@@ -80,6 +81,22 @@ const IndexPage: React.FC<PageProps> = () => {
       ws.send(JSON.stringify(messageToSend));
     });
   };
+
+  // use effect
+  useEffect(() => {
+    let tempFunction = async () => {
+      try {
+        let request = await fetch(config.serverUrl);
+        let response = await request.json();
+        console.log(response);
+        changeIsServerOn(true);
+      } catch (error) {
+        console.error("My error" + error);
+      }
+    };
+    tempFunction();
+  }, []);
+
   // misc
   let currentTheme = createTheme({
     palette: {
@@ -98,7 +115,7 @@ const IndexPage: React.FC<PageProps> = () => {
               <Typography variant="h1" color="primary">
                 {config.appName}
               </Typography>
-              <form>
+              {isServerOn ? (
                 <form onSubmit={handleJoinRoomSubmit}>
                   <TextField
                     value={username}
@@ -117,7 +134,11 @@ const IndexPage: React.FC<PageProps> = () => {
                     join
                   </Button>
                 </form>
-              </form>
+              ) : (
+                <Typography color={"error"} variant="h4" component={"h2"}>
+                  Server is down!
+                </Typography>
+              )}
               <Button variant="outlined" onClick={navigateToSinglePlayer}>
                 single player
               </Button>
